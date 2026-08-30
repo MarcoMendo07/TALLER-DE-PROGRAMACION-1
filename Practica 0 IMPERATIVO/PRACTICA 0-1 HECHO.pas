@@ -1,4 +1,30 @@
+{a) Copie el siguiente programa.
 
+program NumAleatorio;
+var ale: integer;
+begin
+ randomize;
+ ale := random (100);
+ writeln ('El número aleatorio generado es: ', ale);
+ readln;
+end.
+
+b) Compile y ejecute el programa descargado
+
+c) Responda ¿Qué hace el programa? --> en cuaderno 
+
+Modifique el programa incorporando:
+
+d) Un módulo que imprima 20 números aleatorios.
+
+e) Un módulo que imprima N números aleatorios en el
+rango (A,B), donde N, A y B son números enteros que se
+leen por teclado y se reciben como parámetros.
+
+f) Un módulo que imprima números aleatorios en el
+rango (A,B) hasta que se genere un valor igual a F, el cual
+no debe imprimirse. F, A y B son números enteros que se
+leen por teclado y se reciben como parámetros.}
 
 program practica0_1;
 
@@ -33,6 +59,8 @@ begin
 		writeln('el numero aleatorio generado es: ',ale); 
 		ale := random(b-a) + a;   // se le asigna un nuevo valor aleatorio a ale
 	end;
+	writeln('Se leyo el numero: ',f);
+	writeln('Se finaliza la lectura');
 end;
 
 var
