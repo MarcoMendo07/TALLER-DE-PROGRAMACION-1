@@ -65,7 +65,8 @@ public class PRACTICA_1_4 {
             System.out.println();
         }    
         System.out.println("---------------");
-                
+
+        // SINO PODRIA INFORMAR, piso i, oficina j, cantidad de personas, edificio[i][j]
     }
                        
 }
