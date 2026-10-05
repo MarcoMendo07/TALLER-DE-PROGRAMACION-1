@@ -35,23 +35,23 @@ public class PRACTICA_3_5 {
         int dimF = Lector.leerInt();
         System.out.println();
         
-        int dimL = 0;
+        //int dimL = 0;
         
         EstanteriaHogarena e = new EstanteriaHogarena(dimF);
         
         // aca poner un while para agregar varios libros
         
         System.out.println("Ingrese un titulo de libro");
-        String titulo = Lector.leerString();
-        
-        while(!titulo.equals("ZZZ") && (dimL < dimF*2)){         // mientras el titulo sea distinto de ZZZ y dimL sea menor a dimF
+        String titulo = Lector.leerString();						   // en el parcial, tendria que inicializar dimF de Estante en 20 y punto.
+																       // e.contarLibros() < 40 ---> el valor pedido era 20.
+        while(!titulo.equals("ZZZ") && (e.contarLibros() < dimF*2)){   // mientras el titulo sea distinto de ZZZ y dimL sea menor a dimF
             String editorial = GeneradorAleatorio.generarString(5);
             String primerAutor = GeneradorAleatorio.generarString(10);
             String ISBN = GeneradorAleatorio.generarString(20);
         
             Libro l = new Libro(titulo,editorial,primerAutor,ISBN);
             e.agregarLibro(l);
-            dimL++;
+            //dimL++;
             
             System.out.println("Ingrese un titulo de libro");
             titulo = Lector.leerString();
@@ -71,8 +71,8 @@ public class PRACTICA_3_5 {
             System.out.println("El libro se encuentra en la estanteria");
         else
             System.out.println("El libro NO se encuentra en la estanteria");
-        
-        
-    }
-    
+    }  
 }
+
+
+
