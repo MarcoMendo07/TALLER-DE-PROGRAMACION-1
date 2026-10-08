@@ -61,8 +61,8 @@ public class PRACTICA_4_4 {
        
        SistemaLocal sl = new SistemaLocal("La Plata","Bs As","24/12/2025",3);  // 5
        
-       for(int i=0; i<sl.getDimF(); i++){
-           for(int j=0; j<3; j++){
+       for(int i=0; i<sl.getDimF(); i++){   // <= a dimF para simular correctamente la carga de datos??? como es un for no molesta
+           for(int j=0; j<3; j++){           // Luego, en el registrarTemperatura, registrarlo en la pos. [unaLocalidad-1][unaFranja-1]
             System.out.println("Ingrese la Temperatura para la localidad "+(i+1)+" de La Plata - "
                     + "Franja Horaria: "+(j+1));
             double unaTemperatura = Lector.leerDouble();
@@ -75,8 +75,8 @@ public class PRACTICA_4_4 {
         
        SistemaGlobal sg = new SistemaGlobal("Berisso","Bs As","24/12/2025",2);  // 4
        
-       for(int i=0; i<sg.getDimF(); i++){
-           for(int j=0; j<3; j++){
+       for(int i=0; i<sg.getDimF(); i++){  // <= a dimF para simular correctamente la carga de datos
+           for(int j=0; j<3; j++){          // Luego, en el registrarTemperatura, registrarlo en la pos. [unaLocalidad-1][unaFranja-1]
             System.out.println("Ingrese la Temperatura para la localidad "+(i+1)+" de Berisso - "
                     + "Franja Horaria: "+(j+1));
             double unaTemperatura = Lector.leerDouble();
