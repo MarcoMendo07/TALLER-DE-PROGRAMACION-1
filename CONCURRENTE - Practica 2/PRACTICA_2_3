@@ -1,0 +1,128 @@
+programa PRACTICA_2_3
+procesos
+  proceso juntarPapel(ES p:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      p:=p+1
+  fin
+
+  proceso carrera(ES papel: numero)
+  comenzar
+    repetir 8
+      juntarPapel(papel)
+      mover 
+    juntarPapel(papel)
+  fin
+  
+  proceso carrera2(ES papel: numero)
+  comenzar
+    repetir 10
+      juntarPapel(papel)
+      mover 
+    juntarPapel(papel)
+  fin
+  
+  proceso enviarID
+  comenzar
+    EnviarMensaje(1, a1)
+    EnviarMensaje(2, b1)
+  fin
+  
+areas
+  area1: AreaP(1,5,9,5)
+  area2: AreaP(10,5,20,5)
+  area3: AreaP(1,7,9,7)
+  area4: AreaP(10,7,20,7)
+  areaFiscal: AreaP(1,1,1,1)
+  
+robots
+  robot robotA1
+  variables
+    papel,id:numero
+  comenzar
+    derecha
+    RecibirMensaje(id, fiscal)
+    papel:=0
+    carrera(papel)
+    EnviarMensaje(id, a2)
+    EnviarMensaje(papel, a2)
+  fin
+ 
+  robot robotA2
+  variables
+    papel,id:numero
+  comenzar
+    derecha
+    RecibirMensaje(id, a1)
+    RecibirMensaje(papel, a1)
+    carrera2(papel)
+    EnviarMensaje(id, fiscal)
+    EnviarMensaje(papel, fiscal)
+  fin
+  
+  robot robotB1
+  variables
+    id,papel:numero
+  comenzar
+    derecha
+    RecibirMensaje(id, fiscal)
+    papel:=0
+    carrera(papel)
+    EnviarMensaje(id, b2)
+    EnviarMensaje(papel, b2)
+  fin
+ 
+  robot robotB2
+  variables
+    papel, id:numero
+  comenzar
+    derecha
+    RecibirMensaje(id, b1) 
+    RecibirMensaje(papel, b1)
+    carrera2(papel)
+    EnviarMensaje(id, fiscal)
+    EnviarMensaje(papel, fiscal)  
+  fin
+  
+  robot fiscalizador
+  variables
+    max,idMax, cant, quien:numero
+  comenzar
+    enviarID
+    max:=-1
+    idMax:=0
+    repetir 2
+      RecibirMensaje(quien,*)
+      si(quien=1)
+        RecibirMensaje(cant, a2)
+      sino 
+        si quien=2
+          RecibirMensaje(cant, b2)
+      si (cant>max)
+        max:=cant     {gana el que tiene mas papeles}
+        idMax:=quien  {una id para cada equipo, la asigna el fiscal y se la van pasando}
+    Informar('Gano el equipo num ',idMax)    
+  fin
+  
+variables
+  a1:robotA1
+  a2:robotA2
+  b1:robotB1
+  b2:robotB2
+  fiscal:fiscalizador
+comenzar
+  AsignarArea(fiscal, areaFiscal)
+  AsignarArea(a1, area1)
+  AsignarArea(a2, area2)
+  AsignarArea(b1, area3)
+  AsignarArea(b2, area4)
+ 
+  Iniciar(fiscal, 1,1)
+  Iniciar(a1,1,5)
+  Iniciar(a2,10,5)
+  Iniciar(b1,1,7)
+  Iniciar(b2, 10, 7)
+  
+  {las areas deben ser disjuntas, por eso los primeros paran una esquina antes}
+fin
