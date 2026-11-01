@@ -1,0 +1,102 @@
+programa PRACTICA_2_2
+procesos
+  proceso juntarObjetos(ES flores: numero; ES papeles: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+
+areas
+  areaJefe: AreaP (1,1,1,1)
+  area1: AreaP (2,1,6,20)
+  area2: AreaP (20,1,24,20)
+  area3: AreaP (40,1,44,20)
+
+robots
+  robot jefe
+  variables
+    floresTotales: numero
+    papelesTotales: numero
+    cant: numero
+    escalonesTotales: numero
+    termino: boolean
+  comenzar
+    termino:= V
+    floresTotales:= 0
+    papelesTotales:= 0
+    escalonesTotales:= 0
+    repetir 3
+      RecibirMensaje(cant,*)
+      floresTotales:= floresTotales + cant
+    EnviarMensaje(termino,R1)
+    EnviarMensaje(termino,R2)
+    EnviarMensaje(termino,R3)
+    repetir 3
+      RecibirMensaje(cant,*)
+      papelesTotales:= papelesTotales + cant
+    EnviarMensaje(termino,R1)
+    EnviarMensaje(termino,R2)
+    EnviarMensaje(termino,R3)
+    repetir 3
+      RecibirMensaje(cant,*)
+      escalonesTotales:= escalonesTotales + cant
+    Informar("Flores totales ",floresTotales)
+    Informar("Papeles totales ",papelesTotales)
+    Informar("Escalones que cumplen condicion ",escalonesTotales)
+  fin
+  
+  robot escalerero
+  variables
+    alto: numero
+    flores: numero
+    papeles: numero
+    floresTotales: numero
+    papelesTotales: numero
+    escalones: numero
+    termino: boolean
+  comenzar
+    escalones:= 0
+    floresTotales:= 0
+    papelesTotales:= 0
+    repetir 4
+      flores:= 0
+      papeles:= 0
+      Random(alto,1,5)
+      repetir alto
+        juntarObjetos(flores,papeles)
+        mover
+      juntarObjetos(flores,papeles)
+      si(flores > papeles)
+        escalones:= escalones + 1
+      derecha
+      mover
+      repetir 3
+        derecha
+      floresTotales:= floresTotales + flores
+      papelesTotales:= papelesTotales + papeles
+    EnviarMensaje(floresTotales,Rjefe)   {aca tmb hay q usar una barrera??}
+    RecibirMensaje(termino,Rjefe) {termino con flores}
+    EnviarMensaje(papelesTotales,Rjefe)
+    RecibirMensaje(termino,Rjefe) {termino con papeles}
+    EnviarMensaje(escalones,Rjefe)
+  fin
+  
+variables
+  Rjefe: jefe
+  R1: escalerero
+  R2: escalerero
+  R3: escalerero
+comenzar
+  AsignarArea(Rjefe, areaJefe)
+  AsignarArea(R1, area1)
+  AsignarArea(R2, area2)
+  AsignarArea(R3, area3)
+  Iniciar(Rjefe, 1,1)
+  Iniciar(R1, 2,1)
+  Iniciar(R2, 20,1)
+  Iniciar(R3, 40,1)
+fin
