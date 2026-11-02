@@ -1,0 +1,80 @@
+programa PRACTICA_2_2
+procesos
+  proceso juntarObjetos(ES flores: numero; ES papeles: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+
+  proceso escalera(ES escalones: numero)
+  variables
+    alto: numero
+    flores: numero
+    papeles: numero
+  comenzar
+    repetir 4
+      flores:= 0
+      papeles:= 0
+      Random(alto,1,5)
+      repetir alto
+        juntarObjetos(flores,papeles)
+        mover
+      juntarObjetos(flores,papeles)
+      si(flores > papeles)
+        escalones:= escalones + 1
+      derecha
+      mover
+      repetir 3
+        derecha 
+  fin
+
+areas
+  areaJefe: AreaP (1,1,1,1)
+  area1: AreaP (2,1,6,20)
+  area2: AreaP (20,1,24,20)
+  area3: AreaP (40,1,44,20)
+
+robots
+  robot jefe
+  variables
+    cant: numero
+    escalonesTotales: numero
+    termino: boolean
+  comenzar
+     {termino:= V}
+    escalonesTotales:= 0
+    repetir 3
+      RecibirMensaje(cant,*)
+      escalonesTotales:= escalonesTotales + cant
+    Informar("Escalones que cumplen condicion ",escalonesTotales)
+  fin
+  
+  robot escalerero
+  variables
+    escalones: numero
+     {termino: boolean}
+  comenzar
+    escalones:= 0
+    escalera(escalones)
+    EnviarMensaje(escalones,Rjefe)
+  fin
+  
+variables
+  Rjefe: jefe
+  R1: escalerero
+  R2: escalerero
+  R3: escalerero
+comenzar
+  AsignarArea(Rjefe, areaJefe)
+  AsignarArea(R1, area1)
+  AsignarArea(R2, area2)
+  AsignarArea(R3, area3)
+  Iniciar(Rjefe, 1,1)
+  Iniciar(R1, 2,1)
+  Iniciar(R2, 20,1)
+  Iniciar(R3, 40,1)
+fin
