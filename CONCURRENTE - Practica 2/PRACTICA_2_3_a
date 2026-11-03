@@ -125,4 +125,5 @@ comenzar
   Iniciar(b2, 10, 7)
   
   {las areas deben ser disjuntas, por eso los primeros paran una esquina antes}
+  {se podria hacer simplemente 2 AreasPC y que el proceso carrera sea un repet. 9}
 fin
