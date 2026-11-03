@@ -1,0 +1,168 @@
+programa PRACTICA_2_4
+procesos 
+  proceso tomarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina) 
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  
+  proceso tomarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    EnviarMensaje(4,R4) 
+  fin
+  
+  proceso detenerAccesos
+  comenzar
+    EnviarMensaje(F,R1)
+    EnviarMensaje(F,R2) 
+    EnviarMensaje(F,R3) 
+    EnviarMensaje(F,R4) 
+  fin
+  
+  proceso limpiarEsquina(ES flores: numero; ES papeles: numero)
+  variables
+    avAleatoria: numero
+    calleAleatoria: numero
+  comenzar
+    Random(avAleatoria,25,75)
+    Random(calleAleatoria,25,75)
+    Pos(avAleatoria,calleAleatoria)
+    tomarPapeles(papeles)
+    tomarFlores(flores)
+  fin
+  
+  proceso iniciarRobotAleatorio(E ale: numero)
+  comenzar
+    si(ale = 1)
+      EnviarMensaje(V,R1)
+    sino
+      si(ale = 2)
+        EnviarMensaje(V,R2)
+      sino
+        si(ale = 3)
+          EnviarMensaje(V,R3)
+        sino
+          si(ale = 4)
+            EnviarMensaje(V,R4)     
+  fin
+  
+  proceso finalizarRobots(E idMax: numero)
+  comenzar
+    si(idMax = 1)
+      EnviarMensaje(V,R1)
+    sino
+      EnviarMensaje(F,R1)
+    si(idMax = 2)
+      EnviarMensaje(V,R2)
+    sino
+      EnviarMensaje(F,R2)
+    si(idMax = 3)
+      EnviarMensaje(V,R3)
+    sino
+      EnviarMensaje(F,R3)
+    si(idMax = 4)
+      EnviarMensaje(V,R4)
+    sino
+      EnviarMensaje(F,R4) 
+  fin
+  
+areas
+  areaInicio: AreaC(25,1,40,1)
+  area: AreaC(25,25,75,75)
+  areaFiscal: AreaP(1,1,1,1)
+
+robots
+  robot fiscalizador
+  variables
+    ale: numero
+    max: numero
+    idMax: numero
+    quien: numero
+    cant: numero
+  comenzar
+    enviarIDs
+    max:= -1
+    repetir 10
+      Random(ale,1,4)
+      iniciarRobotAleatorio(ale)
+    detenerAccesos
+    repetir 4
+      RecibirMensaje(quien,*)        {siempre quien y dsp cant}
+      si(quien = 1)
+        RecibirMensaje(cant,R1)
+      sino
+        si(quien = 2)
+          RecibirMensaje(cant,R2) 
+        sino
+          si(quien = 3)
+            RecibirMensaje(cant,R3)
+          sino
+            RecibirMensaje(cant,R4) 
+      si(cant > max)
+        max:= cant
+        idMax:= quien     
+    finalizarRobots(idMax)            
+  fin
+  
+  robot recolector
+  variables
+    id: numero
+    puede: boolean
+    avOriginal: numero
+    calleOriginal: numero
+    flores: numero
+    papeles: numero
+    objetos: numero
+    esGanador: boolean
+  comenzar
+    avOriginal:= PosAv
+    calleOriginal:= PosCa
+    flores:= 0
+    papeles:= 0
+    RecibirMensaje(id,fiscal)
+    RecibirMensaje(puede,fiscal)
+    mientras(puede)
+      limpiarEsquina(flores,papeles)
+      Pos(avOriginal,calleOriginal)
+      RecibirMensaje(puede,fiscal)
+    objetos:= flores + papeles
+    EnviarMensaje(id,fiscal)
+    EnviarMensaje(objetos,fiscal)
+    RecibirMensaje(esGanador,fiscal)    {para ver quien es ganador}
+    si(esGanador)
+      Pos(50,50)
+  fin
+  
+variables
+  R1: recolector
+  R2: recolector
+  R3: recolector
+  R4: recolector
+  fiscal: fiscalizador
+comenzar
+  AsignarArea(R1, area)
+  AsignarArea(R2, area)
+  AsignarArea(R3, area)
+  AsignarArea(R4, area)
+  AsignarArea(fiscal, areaFiscal)
+  AsignarArea(R1, areaInicio)
+  AsignarArea(R2, areaInicio)
+  AsignarArea(R3, areaInicio)
+  AsignarArea(R4, areaInicio)
+  Iniciar(fiscal, 1,1)
+  Iniciar(R1, 25,1)
+  Iniciar(R2, 30,1)
+  Iniciar(R3, 35,1)
+  Iniciar(R4, 40,1)
+fin
