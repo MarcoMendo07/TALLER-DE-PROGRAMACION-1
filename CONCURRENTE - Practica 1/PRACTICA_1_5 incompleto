@@ -1,0 +1,55 @@
+programa PRACTICA_1_5
+procesos
+  
+  proceso tomarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  
+  proceso tomarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  
+  
+ 
+ 
+areas
+  {ciudad: AreaC (1,1,100,100)}
+  area1: AreaP(1,75,80,15)
+  area2: AreaP(75,81,80,100)
+  area3: AreaP(86,10,100,15)
+  area4: AreaP(10,1,15,20)
+
+robots
+  robot robotFlorero
+  comenzar
+    recorrerFlor
+    Pos(1,PosCa+5)
+    recorrerFlor
+  fin
+  
+  robot robotPapelero
+  comenzar
+    recorrerPapel
+    Pos()             {Hay que guardar en una variable la calle o av donde}
+                      {empieza para tpearse y sumarle 5}
+  fin
+  
+variables
+  R1: robotFlorero
+  R2: robotPapelero
+  R3: robotFlorero
+  R4: robotPapelero
+comenzar
+  AsignarArea(R1, area1)
+  AsignarArea(R2, area2)
+  AsignarArea(R3, area3)
+  AsignarArea(R4, area4)
+  Iniciar(R1, 1,75)
+  Iniciar(R2, 75,81)
+  Iniciar(R3, 10,1)
+  Iniciar(R4, 86,10)
+fin
