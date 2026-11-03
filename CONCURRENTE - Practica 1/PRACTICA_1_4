@@ -1,0 +1,91 @@
+programa PRACTICA_1_4
+procesos
+  
+  proceso tomarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)    {No usar un "si" aca}
+      tomarPapel
+  fin
+  
+  proceso tomarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  
+  proceso recorrerPar
+  comenzar
+    repetir 99
+      tomarPapeles
+      mover
+    tomarPapeles
+  fin
+  
+  proceso recorrerImpar
+  comenzar
+    repetir 99
+      tomarFlores
+      mover
+    tomarFlores
+  fin
+ 
+  proceso girar1  {Se puede usar pos(posAv+1, 1) en vez de girar}
+  comenzar
+    derecha
+    mover
+    derecha
+  fin
+    
+  proceso girar2
+  comenzar
+    repetir 3
+      derecha
+  fin
+  
+areas
+  {ciudad: AreaC (1,1,100,100)}
+  areaImpar1: AreaP(1,1,25,100)
+  areaPar1: AreaP(26,1,50,100)
+  areaImpar2: AreaP(51,1,75,100)
+  areaPar2: AreaP(76,1,100,100)
+
+robots
+  robot robotImpares
+  comenzar
+    repetir 12
+      recorrerImpar
+      girar1
+      recorrerImpar
+      girar2
+      mover
+      girar2
+    recorrerImpar  
+  fin
+  
+  robot robotPares
+  comenzar
+    repetir 12
+      recorrerPar
+      girar1
+      recorrerPar
+      girar2
+      mover
+      girar2
+    recorrerPar 
+  fin
+  
+variables
+  R1: robotImpares
+  R2: robotPares
+  R3: robotImpares
+  R4: robotPares
+comenzar
+  AsignarArea(R1, areaImpar1)
+  AsignarArea(R2, areaPar1)
+  AsignarArea(R3, areaImpar2)
+  AsignarArea(R4, areaPar2)
+  Iniciar(R1, 1,1)
+  Iniciar(R2, 26,1)
+  Iniciar(R3, 51,1)
+  Iniciar(R4, 76,1)
+fin
