@@ -1,0 +1,80 @@
+programa PRACTICA_1_2
+areas
+  cuadrado: AreaC (1,1,100,100)  {se declara asi un cuadrado de 25x25}
+robots
+  robot robot1
+  variables
+    flores: numero
+  comenzar
+    flores:= 0
+    repetir 19
+      si(HayFlorEnLaEsquina)
+        flores:= flores + 1
+      mover
+    si(HayFlorEnLaEsquina)
+      flores:= flores + 1  
+    Informar("Esquinas con flores ",flores) 
+  fin
+  
+  robot robot2
+  variables
+    papeles: numero
+  comenzar
+    derecha
+    papeles:= 0
+    repetir 19
+      si(HayPapelEnLaEsquina)
+        papeles:= papeles + 1
+      mover
+    si(HayPapelEnLaEsquina)
+      papeles:= papeles + 1  
+    Informar("Esquinas con papeles ",papeles) 
+  fin
+  
+  robot robot3
+  variables
+    ambos: numero
+  comenzar
+    derecha
+    derecha
+    ambos:= 0
+    repetir 19
+      si(HayPapelEnLaEsquina) & (HayFlorEnLaEsquina)
+        ambos:= ambos + 1
+      mover
+    si(HayPapelEnLaEsquina) & (HayFlorEnLaEsquina)
+      ambos:= ambos + 1  
+    Informar("Esquinas con flores y papeles ",ambos) 
+  fin
+ 
+  robot robot4
+  variables
+    vacias: numero
+  comenzar
+    repetir 3
+      derecha
+    vacias:= 0
+    repetir 19
+      si(~HayPapelEnLaEsquina) & (~HayFlorEnLaEsquina)
+        vacias:= vacias + 1
+      mover
+    si(~HayPapelEnLaEsquina) & (~HayFlorEnLaEsquina)    {hay que volver a preguntar, sino no mira la ultima}
+      vacias:= vacias + 1 
+    Informar("Esquinas vacias ",vacias) 
+  fin  
+  
+variables
+  R1: robot1
+  R2: robot2
+  R3: robot3
+  R4: robot4
+comenzar
+  AsignarArea(R1, cuadrado)
+  AsignarArea(R2, cuadrado)
+  AsignarArea(R3, cuadrado)
+  AsignarArea(R4, cuadrado)
+  Iniciar(R1, 10,10)
+  Iniciar(R2, 10,29)   {avenida,calle}
+  Iniciar(R3, 29,29)   {poner limiteSup-1  30--> 29}
+  Iniciar(R4, 29,10)
+fin
