@@ -1,0 +1,125 @@
+programa PRACTICA_3_1
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+
+  proceso limpiarEsquinaAleatoriaF(ES flores: numero; E avOriginal: numero; E calleOriginal: numero)
+  variables
+    avenida: numero
+    calle: numero
+    {seguir: boolean}
+  comenzar
+    {seguir:= V}
+    Random(avenida,1,5)
+    Random(calle,1,10)
+    BloquearEsquina(avenida,calle)
+    Pos(avenida,calle)
+    juntarFlores(flores)
+    Pos(avOriginal,calleOriginal)
+    LiberarEsquina(avenida,calle)
+  fin
+  
+  proceso limpiarEsquinaAleatoriaP(ES papeles: numero; E avOriginal: numero; E calleOriginal: numero)
+  variables
+    avenida: numero
+    calle: numero
+    avOriginal: numero
+    calleOriginal: numero
+  comenzar
+    Random(avenida,6,10)
+    Random(calle,1,9)
+    BloquearEsquina(avenida,calle)
+    Pos(avenida,calle)
+    juntarPapeles(papeles)
+    Pos(avOriginal,calleOriginal)
+    LiberarEsquina(avenida,calle)
+  fin
+  
+  proceso EsquinaCompartidaF(ES flores: numero; E avOriginal: numero; E calleOriginal: numero)
+  comenzar
+    si(HayFlorEnLaBolsa)      {o puedo poner (flores > 0)}
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarFlor
+      flores:= flores - 1
+      Pos(avOriginal,calleOriginal)
+      LiberarEsquina(10,10)     
+  fin
+  
+  proceso EsquinaCompartidaP(ES papeles: numero; E avOriginal: numero; E calleOriginal: numero)
+  comenzar
+    si(HayPapelEnLaBolsa)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarPapel
+      papeles:= papeles - 1
+      Pos(avOriginal,calleOriginal)
+      LiberarEsquina(10,10) 
+  fin
+  
+areas
+  areaCompartida: AreaC(6,10,10,10)
+  areaFlo: AreaPC (1,1,5,10)
+  areaPap: AreaPC (6,1,10,9)
+
+robots
+  robot florero
+  variables
+    flores: numero
+    avOriginal: numero
+    calleOriginal: numero
+  comenzar
+    avOriginal:= PosAv
+    calleOriginal:= PosCa
+    flores:= 0
+    repetir 5
+      limpiarEsquinaAleatoriaF(flores,avOriginal,calleOriginal)
+    mientras(HayFlorEnLaBolsa)  {no pude usar un repetir flores xq los robots finalizaban con flores en la bolsa}
+      EsquinaCompartidaF(flores,avOriginal,calleOriginal)
+  fin
+  
+  robot papelero
+  variables
+    papeles: numero
+    avOriginal: numero
+    calleOriginal: numero
+  comenzar
+    avOriginal:= PosAv
+    calleOriginal:= PosCa
+    papeles:= 0
+    repetir 3
+      limpiarEsquinaAleatoriaP(papeles,avOriginal,calleOriginal)
+    mientras(HayPapelEnLaBolsa)     {no pude usar un repetir papeles xq los robots finalizaban con pap en la bolsa}
+      EsquinaCompartidaP(papeles,avOriginal,calleOriginal)  
+  fin
+
+variables
+  R1: florero
+  R2: florero
+  R3: papelero
+  R4: papelero
+comenzar
+  AsignarArea(R1, areaFlo)
+  AsignarArea(R2, areaFlo)
+  AsignarArea(R3, areaPap)
+  AsignarArea(R4, areaPap)
+  AsignarArea(R1, areaCompartida)
+  AsignarArea(R2, areaCompartida)
+  AsignarArea(R3, areaCompartida)
+  AsignarArea(R4, areaCompartida)
+  Iniciar(R1, 6,10)
+  Iniciar(R2, 7,10)
+  Iniciar(R3, 8,10)
+  Iniciar(R4, 9,10)
+fin
