@@ -1,0 +1,86 @@
+programa PRACTICA_3_4
+procesos
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    EnviarMensaje(4,R4)
+  fin
+  
+areas
+  areaCompartida: AreaC (10,10,11,11)
+  areaCoordinador: AreaP (1,1,1,1)
+  areaInicio: AreaPC (9,9,9,12)
+  
+robots
+  robot florero
+  variables
+    avOriginal: numero
+    calleOriginal: numero
+    seguir: boolean
+    id: numero
+  comenzar
+    seguir:= V
+    avOriginal:= PosAv
+    calleOriginal:= PosCa
+    RecibirMensaje(id,coordinador)
+    mientras(seguir)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      si(HayFlorEnLaEsquina)
+        tomarFlor
+        Pos(avOriginal,calleOriginal)
+        LiberarEsquina(10,10)
+        BloquearEsquina(11,11)
+        Pos(11,11)
+        depositarFlor
+        Pos(avOriginal,calleOriginal)
+        LiberarEsquina(11,11)
+      sino
+        seguir:= F
+        EnviarMensaje(id,coordinador)  {Le avisa que finalizo mandando su id (no hay mas flores)}
+        Pos(avOriginal,calleOriginal)
+        LiberarEsquina(10,10)
+  fin
+  
+  robot robotCoordinador
+  variables
+    quien: numero
+    ultimo: numero
+  comenzar
+    enviarIDs
+    repetir 4
+      RecibirMensaje(quien,*)
+    ultimo:= quien    {tendra el valor del ultimo que llego}
+    Pos(11,11)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  
+variables
+  R1: florero
+  R2: florero
+  R3: florero
+  R4: florero
+  coordinador: robotCoordinador      
+comenzar
+  AsignarArea(R1, areaInicio)
+  AsignarArea(R2, areaInicio)
+  AsignarArea(R3, areaInicio)
+  AsignarArea(R4, areaInicio)
+  AsignarArea(R1, areaCompartida)
+  AsignarArea(R2, areaCompartida)
+  AsignarArea(R3, areaCompartida)
+  AsignarArea(R4, areaCompartida)
+  AsignarArea(coordinador, areaCoordinador)
+  AsignarArea(coordinador, areaCompartida)
+  Iniciar(coordinador, 1,1)
+  Iniciar(R1, 9,9)
+  Iniciar(R2, 9,10)
+  Iniciar(R3, 9,11)
+  Iniciar(R4, 9,12)
+  
+  {c- quizas la opcion 2 maximiza la concurrencia porque la 1 mantiene el control de las esquinas en 1 solo rob. por mas tiempo}
+  { pero son casi lo mismo, ya que en la opcion 1 cada robot no desperdicia tiempo en volver a su esq. inicial}
+fin
