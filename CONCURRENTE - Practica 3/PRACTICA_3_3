@@ -1,0 +1,112 @@
+programa PRACTICA_3_3
+procesos
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    EnviarMensaje(4,R4)
+  fin
+  
+  proceso enviarEsquina(E esquina: numero)
+  comenzar
+    EnviarMensaje(esquina,R1)
+    EnviarMensaje(esquina,R2)
+    EnviarMensaje(esquina,R3)
+    EnviarMensaje(esquina,R4)
+  fin
+
+areas
+  cuadrante: AreaC (2,2,10,10)
+  areaJefe: AreaP (1,1,1,1)
+  areaInicio: AreaPC (2,1,5,1)
+  
+robots
+  robot florero
+  variables
+    id: numero
+    calleEsquina: numero
+    avEsquina: numero
+    calleOriginal: numero
+    avOriginal: numero
+    flores: numero
+    seguir: boolean
+  comenzar
+    flores:= 0
+    seguir:= V
+    calleOriginal:= PosCa
+    avOriginal:= PosAv
+    RecibirMensaje(id,jefe)
+    RecibirMensaje(avEsquina,jefe)
+    RecibirMensaje(calleEsquina,jefe)
+    mientras(seguir)     {<----El mismo robot controla hasta donde seguir}
+      BloquearEsquina(avEsquina,calleEsquina)
+      Pos(avEsquina,calleEsquina)
+      si (HayFlorEnLaEsquina)
+        tomarFlor
+        flores:= flores + 1
+        Pos(avOriginal,calleOriginal)
+        LiberarEsquina(avEsquina,calleEsquina)
+      sino
+        seguir:= F       {<----Aca esta lo IMPORTANTE}
+        Pos(avOriginal,calleOriginal)
+        LiberarEsquina(avEsquina,calleEsquina)
+    EnviarMensaje(id,jefe)
+    EnviarMensaje(flores,jefe)
+  fin
+  
+  robot robotJefe
+  variables
+    esquina: numero
+    quien: numero
+    cant: numero
+    max: numero
+    idMax: numero
+  comenzar
+    enviarIDs
+    max:= -1
+    idMax:= 0
+    repetir 2
+      Random(esquina,2,10)    
+      enviarEsquina(esquina)
+    repetir 4
+      RecibirMensaje(quien,*)
+      si(quien = 1)
+        RecibirMensaje(cant,R1)  
+      sino
+        si(quien = 2)
+          RecibirMensaje(cant,R2)  
+        sino
+          si(quien = 3)
+            RecibirMensaje(cant,R3) 
+          sino
+            si(quien = 4)
+              RecibirMensaje(cant,R4)  
+      si(cant > max)
+        idMax:= quien  
+        max:= cant        
+    Informar('El Rob. que recolecto mas flores es el Rob. Num.', idMax)  
+  fin
+  
+variables
+  R1: florero
+  R2: florero
+  R3: florero
+  R4: florero
+  jefe: robotJefe      
+comenzar
+  AsignarArea(R1, cuadrante)
+  AsignarArea(R2, cuadrante)
+  AsignarArea(R3, cuadrante)
+  AsignarArea(R4, cuadrante)
+  AsignarArea(R1, areaInicio)
+  AsignarArea(R2, areaInicio)
+  AsignarArea(R3, areaInicio)
+  AsignarArea(R4, areaInicio)
+  AsignarArea(jefe, areaJefe)
+  Iniciar(jefe, 1,1)
+  Iniciar(R1, 2,1)
+  Iniciar(R2, 3,1)
+  Iniciar(R3, 4,1)
+  Iniciar(R4, 5,1)
+fin
