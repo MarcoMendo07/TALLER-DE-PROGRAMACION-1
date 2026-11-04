@@ -1,0 +1,196 @@
+programa PRACTICA_3_2
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  
+  proceso enviarIds
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+  fin
+  
+  proceso esquinaCompartidaFlores(ES flores: numero; E id: numero)
+  comenzar
+    juntarFlores(flores)  
+    mover
+    juntarFlores(flores)  
+    derecha
+    BloquearEsquina(PosAv + 1, PosCa)
+    mover
+    EnviarMensaje(id,jefe)
+    juntarFlores(flores)
+    Pos(PosAv - 1, PosCa)
+    LiberarEsquina(PosAv + 1, PosCa)
+    derecha
+    derecha  
+  fin
+  
+  proceso parte1Flores(ES flores: numero)
+  variables
+    largo: numero
+  comenzar
+    largo:= 5
+    repetir 4
+      repetir 2
+        repetir largo
+          mover
+        juntarFlores(flores)  
+        derecha
+      derecha
+      derecha
+      largo:= largo - 1 
+  fin
+   
+  proceso parte2Flores(ES flores: numero)
+  variables
+    largo: numero
+  comenzar
+    largo:= 2
+    repetir 4
+      repetir 2
+        repetir largo
+          mover
+        juntarFlores(flores)  
+        derecha
+      derecha
+      derecha
+      largo:= largo + 1  
+  fin
+  
+  proceso carreraFlores(ES flores: numero; E id: numero)
+  comenzar
+    parte1Flores(flores)
+    esquinaCompartidaFlores(flores,id)
+    parte2Flores(flores)
+  fin
+  
+  proceso parte1Papeles(ES papeles: numero)
+  variables
+    largo: numero
+  comenzar
+    largo:= 5
+    repetir 4
+      repetir 2
+        repetir largo
+          mover
+        juntarPapeles(papeles)  
+        repetir 3
+          derecha
+      derecha
+      derecha
+      largo:= largo - 1 
+  fin
+  
+  proceso esquinaCompartidaPapeles(ES papeles: numero; E id: numero)
+  comenzar
+    juntarPapeles(papeles)
+    mover
+    juntarPapeles(papeles)
+    repetir 3
+      derecha
+    BloquearEsquina(PosAv - 1, PosCa)
+    mover
+    EnviarMensaje(id,jefe)
+    juntarPapeles(papeles)
+    Pos(PosAv + 1, PosCa)
+    LiberarEsquina(PosAv - 1, PosCa)
+    derecha
+    derecha
+  fin
+  
+  proceso parte2Papeles(ES papeles: numero)
+  variables
+    largo: numero
+  comenzar
+    largo:= 2
+    repetir 4
+      repetir 2
+        repetir largo
+          mover
+        juntarPapeles(papeles)  
+        repetir 3
+          derecha
+      derecha
+      derecha
+      largo:= largo + 1  
+  fin
+  
+  proceso carreraPapeles(ES papeles: numero; E id: numero)
+  comenzar
+    parte1Papeles(papeles)
+    esquinaCompartidaPapeles(papeles,id)
+    parte2Papeles(papeles)
+  fin
+  
+  
+areas
+  area: AreaC(1,1,31,30)
+
+robots  
+  robot robot1
+  variables
+    flores: numero
+    id: numero
+  comenzar
+    flores:= 0
+    RecibirMensaje(id,jefe)
+    carreraFlores(flores,id)
+    Informar("Flores ",flores)
+    EnviarMensaje(V,jefe)  
+  fin
+  
+  robot robot2
+  variables
+    papeles: numero
+    id: numero
+  comenzar
+    papeles:= 0
+    RecibirMensaje(id,jefe)
+    carreraPapeles(papeles,id)
+    Informar("Papeles ",papeles)
+    EnviarMensaje(V,jefe)  
+  fin
+  
+  robot robotJefe
+  variables
+    llego: boolean
+    quien: numero
+    ganador: numero
+    termino: boolean
+  comenzar
+    enviarIds
+    RecibirMensaje(quien,*)
+    si(quien = 1)
+      ganador:= quien
+    sino
+      si(quien = 2)
+        ganador:= quien 
+    RecibirMensaje(quien,*)
+    repetir 2
+      RecibirMensaje(termino,*)
+    Informar("El ganador es el rob. num. ",ganador)      
+  fin
+  
+variables
+  R1: robot1
+  R2: robot2
+  jefe: robotJefe
+comenzar
+  AsignarArea(R1, area)
+  AsignarArea(R2, area)
+  AsignarArea(jefe, area)
+  Iniciar(jefe, 16,1)
+  Iniciar(R1, 1,1)
+  Iniciar(R2, 31,1)
+fin
