@@ -1,0 +1,122 @@
+programa PRACTICA_4_1
+procesos
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+  fin
+  
+areas
+  area1: AreaP (1,1,1,100)
+  area2: AreaP (2,1,2,100)
+  area3: AreaP (3,1,3,100)
+  areaServidor: AreaP(100,100,100,100)
+  
+robots
+  robot cliente
+  variables
+    floresAle: numero
+    id: numero
+    avAct, calleAct: numero
+    ACK: boolean
+    flores: numero
+  comenzar
+    flores:= 0
+    Random(floresAle,1,4)
+    avAct:= PosAv
+    calleAct:= PosCa + 1
+    RecibirMensaje(id,servidor)
+    EnviarMensaje(id,servidor)
+    mientras(PosCa < 100)
+      EnviarMensaje(floresAle,servidor)
+      EnviarMensaje(avAct,servidor)
+      EnviarMensaje(calleAct,servidor)
+      RecibirMensaje(ACK,servidor)
+      BloquearEsquina(avAct,calleAct)
+      mover
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor
+        flores:= flores + 1
+      Pos(avAct,calleAct - 1)  
+      LiberarEsquina(avAct,calleAct)
+      mientras(HayFlorEnLaBolsa) & (PosCa < 100)   {no puedo usar repet. porque debe parar al llegar a 100}
+        depositarFlor
+        mover
+    EnviarMensaje(0,servidor)    {enviar mensaje de que termino}
+  fin
+  
+  robot robotServidor
+  variables
+    id: numero
+    quien: numero
+    cant: numero
+    av: numero
+    calle: numero
+    terminados: numero
+  comenzar
+    enviarIDs
+    terminados:= 0
+    mientras(terminados < 3)
+      RecibirMensaje(quien,*)
+      si(quien = 1)
+        RecibirMensaje(cant,R1)
+        si(cant <> 0)
+          RecibirMensaje(av,R1)
+          RecibirMensaje(calle,R1)
+          BloquearEsquina(av,calle)
+          Pos(av,calle)
+          repetir cant
+            depositarFlor
+          Pos(100,100)
+          LiberarEsquina(av,calle)
+          EnviarMensaje(V,R1)
+        sino
+          terminados:= terminados + 1   
+      sino
+        si(quien = 2)
+          RecibirMensaje(cant,R2)
+          si(cant <> 0)
+            RecibirMensaje(av,R2)
+            RecibirMensaje(calle,R2)
+            BloquearEsquina(av,calle)
+            Pos(av,calle)
+            repetir cant
+              depositarFlor
+            Pos(100,100)
+            LiberarEsquina(av,calle)
+            EnviarMensaje(V,R2)
+          sino
+            terminados:= terminados + 1
+        sino
+          si(quien = 3)
+            RecibirMensaje(cant,R3)
+            si(cant <> 0)
+              RecibirMensaje(av,R3)
+              RecibirMensaje(calle,R3)
+              BloquearEsquina(av,calle)
+              Pos(av,calle)
+              repetir cant
+                depositarFlor
+              Pos(100,100)
+              LiberarEsquina(av,calle)
+              EnviarMensaje(V,R3)
+            sino
+              terminados:= terminados + 1         
+  fin
+  
+variables
+  servidor: robotServidor
+  R1: cliente
+  R2: cliente
+  R3: cliente
+comenzar
+  AsignarArea(R1, area1)
+  AsignarArea(R2, area2)
+  AsignarArea(R3, area3)
+  AsignarArea(servidor, areaServidor)
+  Iniciar(servidor, 100,100)
+  Iniciar(R1, 1,1)
+  Iniciar(R2, 2,1)
+  Iniciar(R3, 3,1)
+fin

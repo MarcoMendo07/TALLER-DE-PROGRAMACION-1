@@ -1,0 +1,107 @@
+programa PRACTICA_4_2
+procesos
+  proceso juntarPapeles(ES papeles: numero; E avActual: numero; E caActual:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina) 
+      tomarPapel
+      papeles := papeles + 1
+      si(papeles = 5)
+        BloquearEsquina(50,50)
+        Pos(50,50)
+        depositarPapeles(papeles)
+        Pos(avActual,caActual)
+        LiberarEsquina(50,50)
+  fin
+  proceso depositarPapeles(ES papeles:numero)
+  comenzar
+    repetir papeles
+      depositarPapel
+      papeles := papeles - 1
+  fin
+  {procesos robot consumidor}
+  proceso contarPapeles(ES cantPapeles:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+    repetir cantPapeles
+      depositarPapel
+  fin
+  proceso depositarEnOrigen(ES papeles:numero; ES intentos:numero; E avInicial:numero; E caInicial:numero)
+  variables
+    cantPapeles : numero
+    p:numero
+  comenzar
+    cantPapeles := 0
+    Random(p,2,5)
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    contarPapeles(cantPapeles)
+    si(cantPapeles >= p)
+      repetir p
+        tomarPapel
+        papeles := papeles + 1
+      Pos(avInicial,caInicial)
+      LiberarEsquina(50,50)
+      intentos := 0 {hay q reiniciar los intentos} 
+    sino
+      Pos(avInicial,caInicial)
+      LiberarEsquina(50,50)
+      intentos := intentos + 1
+      Informar(intentos)
+  fin
+areas
+  zonaProductor1: AreaP(5,1,5,100)
+  zonaProductor2: AreaP(10,1,10,100)
+  esquina50: AreaC(50,50,50,50)
+  zonaConsumidor1: AreaP(11,1,11,1)
+  zonaConsumidor2: AreaP(12,1,12,1)
+robots
+  robot Productor
+  variables
+    papeles: numero
+    avActual,caActual:numero
+  comenzar
+    papeles := 0
+    mientras(PosCa < 100)
+      avActual := PosAv
+      caActual := PosCa
+      juntarPapeles(papeles,avActual,caActual)
+      mover
+    avActual := PosAv
+    caActual := PosCa
+    juntarPapeles(papeles,avActual,caActual)
+  fin
+  robot Consumidor
+  variables
+    papeles: numero
+    avInicial: numero
+    caInicial: numero
+    intentos:numero
+  comenzar
+    papeles := 0
+    intentos := 0
+    avInicial := PosAv
+    caInicial := PosCa
+    mientras(intentos < 8)
+      depositarEnOrigen(papeles,intentos,avInicial,caInicial)
+  fin
+variables
+  p1: Productor
+  p2: Productor
+  c1: Consumidor
+  c2: Consumidor
+comenzar
+  AsignarArea(p1,zonaProductor1)
+  AsignarArea(p1,esquina50)
+  AsignarArea(p2,zonaProductor2)
+  AsignarArea(p2,esquina50)
+  AsignarArea(c1,zonaConsumidor1)
+  AsignarArea(c1,esquina50)
+  AsignarArea(c2,zonaConsumidor2)
+  AsignarArea(c2,esquina50)
+  Iniciar(p1,5,1)
+  Iniciar(p2,10,1)
+  Iniciar(c1,11,1)
+  Iniciar(c2,12,1)
+fin
