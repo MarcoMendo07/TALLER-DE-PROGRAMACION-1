@@ -7,10 +7,41 @@ procesos
     EnviarMensaje(3,R3)
   fin
   
+  proceso enviarDatos(E id: numero; E floresAle: numero; E avAct: numero; E calleAct: numero)
+  comenzar
+    EnviarMensaje(id,servidor)
+    EnviarMensaje(floresAle,servidor)
+    EnviarMensaje(avAct,servidor)
+    EnviarMensaje(calleAct,servidor)
+  fin
+  
+  proceso tomarFlores(E floresAle: numero; ES flores: numero)
+  comenzar
+    repetir floresAle
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+  proceso avanzarDepositandoFlores(E flores: numero)
+  comenzar
+    repetir flores
+      depositarFlor 
+      si(PosCa < 100)                           
+        mover
+  fin
+  
+  proceso depositarAdelanteYvolver(E av: numero; E calle: numero; E cant: numero)
+  comenzar
+    Pos(av,calle)
+    repetir cant
+      depositarFlor
+    Pos(100,100)
+  fin
+  
 areas
-  area1: AreaP (1,1,1,100)
-  area2: AreaP (2,1,2,100)
-  area3: AreaP (3,1,3,100)
+  area1: AreaPC (1,1,1,100)
+  area2: AreaPC (2,1,2,100)
+  area3: AreaPC (3,1,3,100)
   areaServidor: AreaP(100,100,100,100)
   
 robots
@@ -22,28 +53,20 @@ robots
     ACK: boolean
     flores: numero
   comenzar
-    flores:= 0
-    Random(floresAle,1,4)
     avAct:= PosAv
-    calleAct:= PosCa + 1
     RecibirMensaje(id,servidor)
-    EnviarMensaje(id,servidor)
     mientras(PosCa < 100)
-      EnviarMensaje(floresAle,servidor)
-      EnviarMensaje(avAct,servidor)
-      EnviarMensaje(calleAct,servidor)
-      RecibirMensaje(ACK,servidor)
-      BloquearEsquina(avAct,calleAct)
+      calleAct:= PosCa + 1
+      Random(floresAle,1,4)
+      enviarDatos(id,floresAle,avAct,calleAct)
+      RecibirMensaje(ACK,servidor)  {es el v q envia el servidor cuando termina}
       mover
-      mientras(HayFlorEnLaEsquina)
-        tomarFlor
-        flores:= flores + 1
+      flores:= 0
+      tomarFlores(floresAle,flores)
       Pos(avAct,calleAct - 1)  
-      LiberarEsquina(avAct,calleAct)
-      mientras(HayFlorEnLaBolsa) & (PosCa < 100)   {no puedo usar repet. porque debe parar al llegar a 100}
-        depositarFlor
-        mover
-    EnviarMensaje(0,servidor)    {enviar mensaje de que termino}
+      avanzarDepositandoFlores(flores)
+    EnviarMensaje(id,servidor)
+    EnviarMensaje(0,servidor)    {enviar mensaje de que termino (flores)}
   fin
   
   robot robotServidor
@@ -54,22 +77,19 @@ robots
     av: numero
     calle: numero
     terminados: numero
+    a: numero
   comenzar
+    a:= 1
     enviarIDs
     terminados:= 0
     mientras(terminados < 3)
       RecibirMensaje(quien,*)
       si(quien = 1)
         RecibirMensaje(cant,R1)
-        si(cant <> 0)
+        si(cant <> 0)             {nunca seria 0 cant. porque es de 1 a 4}
           RecibirMensaje(av,R1)
           RecibirMensaje(calle,R1)
-          BloquearEsquina(av,calle)
-          Pos(av,calle)
-          repetir cant
-            depositarFlor
-          Pos(100,100)
-          LiberarEsquina(av,calle)
+          depositarAdelanteYvolver(av,calle,cant)
           EnviarMensaje(V,R1)
         sino
           terminados:= terminados + 1   
@@ -79,12 +99,7 @@ robots
           si(cant <> 0)
             RecibirMensaje(av,R2)
             RecibirMensaje(calle,R2)
-            BloquearEsquina(av,calle)
-            Pos(av,calle)
-            repetir cant
-              depositarFlor
-            Pos(100,100)
-            LiberarEsquina(av,calle)
+            depositarAdelanteYvolver(av,calle,cant)
             EnviarMensaje(V,R2)
           sino
             terminados:= terminados + 1
@@ -94,15 +109,11 @@ robots
             si(cant <> 0)
               RecibirMensaje(av,R3)
               RecibirMensaje(calle,R3)
-              BloquearEsquina(av,calle)
-              Pos(av,calle)
-              repetir cant
-                depositarFlor
-              Pos(100,100)
-              LiberarEsquina(av,calle)
+              depositarAdelanteYvolver(av,calle,cant)
               EnviarMensaje(V,R3)
             sino
               terminados:= terminados + 1         
+    Informar(a)
   fin
   
 variables
@@ -114,6 +125,9 @@ comenzar
   AsignarArea(R1, area1)
   AsignarArea(R2, area2)
   AsignarArea(R3, area3)
+  AsignarArea(servidor, area1)
+  AsignarArea(servidor, area2)
+  AsignarArea(servidor, area3)
   AsignarArea(servidor, areaServidor)
   Iniciar(servidor, 100,100)
   Iniciar(R1, 1,1)
