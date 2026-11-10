@@ -1,0 +1,139 @@
+programa PRACTICA_4_4
+procesos
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+  fin 
+  
+  proceso calcularValoresAleatorios(ES trabajadorAle: numero; ES tareaAle: numero; ES avAle: numero; ES calleAle: numero)
+  variables
+    trab,tarea,av,calle: numero
+  comenzar
+    Random(trab,1,2)
+    Random(tarea,1,3)
+    Random(av,2,100)
+    Random(calle,2,100)
+    trabajadorAle:= trab
+    tareaAle:= tarea
+    avAle:= av
+    calleAle:= calle
+  fin
+  
+  proceso finalizar
+  comenzar
+    EnviarMensaje(4,R1)
+    EnviarMensaje(4,R2)
+  fin
+
+  {----------------------------------------------}
+  
+  proceso recogerFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+  proceso recogerPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  
+  proceso vaciarBolsa(E papeles: numero; E flores: numero)
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  
+  proceso recibirDatosDelJefe(ES av: numero; ES calle: numero)
+  comenzar
+    RecibirMensaje(av,jefe)
+    RecibirMensaje(calle,jefe)
+  fin
+  
+areas
+  inicio1: AreaP (1,1,1,1)
+  inicio2: AreaP (2,1,2,1)
+  inicio3: AreaP (3,1,3,1)
+  cuadrante: AreaPC(2,2,100,100)
+  
+robots
+  robot trabajador
+  variables
+    id: numero
+    flores: numero
+    papeles: numero
+    tarea: numero
+    av: numero
+    calle: numero
+    avInicio, calleInicio: numero
+  comenzar
+    flores:= 0
+    papeles:= 0
+    avInicio:= PosAv
+    calleInicio:= PosCa
+    RecibirMensaje(id,jefe)
+    RecibirMensaje(tarea,jefe)
+    mientras(tarea < 4)
+      recibirDatosDelJefe(av,calle)
+      BloquearEsquina(av,calle)        {hay que bloquear porque podria aparecer la misma esq}
+      Pos(av,calle)
+      si(tarea = 1)
+        Informar("Tarea num. ",tarea)
+        recogerFlores(flores)
+      sino
+        si(tarea = 2)
+          Informar("Tarea num. ",tarea)
+          recogerPapeles(papeles)  
+        sino  {= 3}
+          Informar("Tarea num. ",tarea)
+          vaciarBolsa(papeles,flores)  
+      Pos(avInicio,calleInicio)
+      LiberarEsquina(av,calle)
+      RecibirMensaje(tarea,jefe)    
+  fin
+  
+  robot robotJefe
+  variables
+    trabajadorAle: numero
+    avAle: numero
+    calleAle: numero
+    tareaAle: numero
+  comenzar
+    enviarIDs
+    trabajadorAle:= 0
+    avAle:= 0
+    calleAle:= 0
+    tareaAle:= 0
+    repetir 10
+      calcularValoresAleatorios(trabajadorAle,tareaAle,avAle,calleAle)
+      si(trabajadorAle = 1)
+        EnviarMensaje(tareaAle,R1)
+        EnviarMensaje(avAle,R1)
+        EnviarMensaje(calleAle,R1)
+      sino  { = 2}
+        EnviarMensaje(tareaAle,R2)
+        EnviarMensaje(avAle,R2)
+        EnviarMensaje(calleAle,R2)  
+    finalizar
+  fin
+  
+variables
+  jefe: robotJefe
+  R1: trabajador
+  R2: trabajador
+comenzar
+  AsignarArea(jefe, inicio1)
+  AsignarArea(R1, inicio2)
+  AsignarArea(R2, inicio3)
+  AsignarArea(R1, cuadrante)
+  AsignarArea(R2, cuadrante)
+  Iniciar(jefe, 1,1)
+  Iniciar(R1, 2,1)
+  Iniciar(R2, 3,1)
+fin
