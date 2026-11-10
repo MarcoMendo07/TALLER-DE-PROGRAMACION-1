@@ -1,0 +1,84 @@
+programa PRACTICA_4_3
+procesos
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+  fin
+  
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  
+  proceso realizarEtapa(ES papeles: numero)
+  comenzar
+    repetir 5
+      juntarPapeles(papeles)
+      si(PosCa < 100)       {importante para no caerse, controlar cuando el robot se mueve}
+        mover
+  fin
+  
+  proceso activarRecorridos
+  comenzar
+    EnviarMensaje(V,R1)
+    EnviarMensaje(V,R2)
+    EnviarMensaje(V,R3)
+  fin
+  
+  proceso esperarLlegadaDeTodos
+  variables
+    termino: boolean
+  comenzar
+    RecibirMensaje(termino,R1)
+    RecibirMensaje(termino,R2)
+    RecibirMensaje(termino,R3)
+  fin
+  
+areas
+  areaInicio: AreaP (4,1,4,1)
+  areaAvenida1: AreaP (1,1,1,100)
+  areaAvenida2: AreaP (2,1,2,100)
+  areaAvenida3: AreaP (3,1,3,100)
+  
+robots
+  robot papelero
+  variables
+    papeles: numero
+    ID: numero
+    aviso: boolean
+  comenzar
+    papeles := 0
+    RecibirMensaje(ID,coordinador)
+    repetir 20
+      RecibirMensaje(aviso,coordinador) {espera a que el coordinador le diga q se mueva}                       
+      realizarEtapa(papeles)                
+      EnviarMensaje(V,coordinador)             {avisa que termino una etap.}     
+  fin
+
+  robot robotCoordinador
+  comenzar
+    enviarIDs
+    repetir 20
+      activarRecorridos
+      esperarLlegadaDeTodos
+  fin
+  
+variables
+  R1: papelero
+  R2: papelero
+  R3: papelero
+  coordinador: robotCoordinador
+comenzar
+  AsignarArea(coordinador, areaInicio)
+  AsignarArea(R1, areaAvenida1)
+  AsignarArea(R2, areaAvenida2)
+  AsignarArea(R3, areaAvenida3)
+  Iniciar(R1, 1,1)
+  Iniciar(R2, 2,1)
+  Iniciar(R3, 3,1)
+  Iniciar(coordinador, 4,1)
+fin
