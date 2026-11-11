@@ -1,0 +1,133 @@
+programa PRACTICA_5_4
+procesos
+  proceso calcularAleatorios(ES calleAle: numero; ES avAle: numero; ES id: numero)
+  variables
+    ca,av,i: numero
+  comenzar
+    Random(ca,40,60)
+    Random(av,40,60)
+    Random(i,1,3)
+    calleAle:= ca
+    avAle:= av
+    id:= i
+  fin
+  
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+  proceso posicionarseYvolver(E avAle: numero; E calleAle: numero; E avOriginal: numero; E calleOriginal: numero; ES flores: numero)
+  comenzar
+    BloquearEsquina(avAle,calleAle)
+    Pos(avAle,calleAle)
+    juntarFlores(flores)
+    Pos(avOriginal,calleOriginal)
+    LiberarEsquina(avAle,calleAle)
+  fin
+  
+  proceso depositarFlores(ES flores: numero; E avOriginal: numero; E calleOriginal: numero)
+  comenzar
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+      flores:= flores - 1
+    Pos(avOriginal,calleOriginal)
+    LiberarEsquina(10,10)
+  fin
+  
+  proceso contarFlores(ES floresTotales: numero)
+  comenzar
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    juntarFlores(floresTotales)
+    LiberarEsquina(10,10)
+  fin
+  
+  proceso detenerEjecucion
+  comenzar
+    EnviarMensaje(F, R1)
+    EnviarMensaje(F, R2)    {corta el ciclo mientras de los floreros}
+    EnviarMensaje(F, R3)
+  fin
+  
+areas
+  cuadrante: AreaPC (40,40,60,60)
+  esquina: AreaC (10,10,10,10)
+  inicio1: AreaP (1,1,1,1)
+  inicio2: AreaP (2,1,2,1)
+  inicio3: AreaP (3,1,3,1)
+  inicio4: AreaP (4,1,4,1)
+  
+robots
+  robot florero
+  variables
+    avOriginal, calleOriginal, avAle, calleAle, flores: numero
+    seguir: boolean
+  comenzar
+    flores:= 0
+    avOriginal:= PosAv
+    calleOriginal:= PosCa
+    RecibirMensaje(seguir, fiscal)   {PRIMERO Q NADA recibe si debe actuar o no}
+    mientras(seguir)
+      RecibirMensaje(avAle, fiscal)
+      RecibirMensaje(calleAle, fiscal)
+      posicionarseYvolver(avAle,calleAle,avOriginal,calleOriginal,flores)
+      EnviarMensaje(V, fiscal)        {le avisa que volvio}
+      RecibirMensaje(seguir, fiscal)  {se queda esperando a que le digan si sigue o si no hay mas intentos}  
+    depositarFlores(flores,avOriginal,calleOriginal)
+    EnviarMensaje(V, fiscal)   {Aviso final al fiscalizador de que ya vació la bolsa}
+  fin
+  
+  robot fiscalizador
+  variables
+    calleAle, avAle, id, floresTotales: numero
+    listo: boolean
+  comenzar
+    floresTotales:= 0
+    repetir 8
+      calcularAleatorios(calleAle,avAle,id)
+      si(id = 1)
+        EnviarMensaje(V, R1)
+        EnviarMensaje(avAle, R1)
+        EnviarMensaje(calleAle, R1)
+      sino
+        si(id = 2)
+          EnviarMensaje(V, R2)
+          EnviarMensaje(avAle, R2)
+          EnviarMensaje(calleAle, R2)
+        sino
+          EnviarMensaje(V, R3)
+          EnviarMensaje(avAle, R3)
+          EnviarMensaje(calleAle, R3)
+      RecibirMensaje(listo, *)    { Espera que el robot asignado vuelva a su base }
+    detenerEjecucion
+    repetir 3
+      RecibirMensaje(listo, *)    {espera a que los 3 avisen que ya depositaron todo}     
+    contarFlores(floresTotales)  
+    Informar('Una cant. de flores de ', floresTotales)
+  fin
+  
+variables
+  R1, R2, R3: florero
+  fiscal: fiscalizador
+comenzar
+  AsignarArea(R1, inicio1)
+  AsignarArea(R2, inicio2)
+  AsignarArea(R3, inicio3)
+  AsignarArea(fiscal, inicio4)
+  AsignarArea(R1, cuadrante)
+  AsignarArea(R2, cuadrante)
+  AsignarArea(R3, cuadrante)
+  AsignarArea(R1, esquina)
+  AsignarArea(R2, esquina)
+  AsignarArea(R3, esquina)
+  AsignarArea(fiscal, esquina)
+  Iniciar(R1, 1,1)
+  Iniciar(R2, 2,1)
+  Iniciar(R3, 3,1)
+  Iniciar(fiscal, 4,1)
+fin

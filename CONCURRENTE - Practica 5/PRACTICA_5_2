@@ -1,0 +1,105 @@
+programa PRACTICA_5_2
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+  proceso depositarFlores(ES flores: numero)
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores:= flores
+    repetir cantFlores
+      depositarFlor
+      flores:= flores - 1
+  fin
+  
+  proceso realizarEtapa(ES flores: numero; E avAct: numero; E calle: numero)
+  comenzar
+    repetir 10
+      juntarFlores(flores)
+      si(PosAv < 100)
+        mover  
+    avAct:= PosAv
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    depositarFlores(flores)
+    Pos(avAct,calle)
+    LiberarEsquina(50,50)
+  fin
+  
+  proceso esperarQueTerminen(E termino: boolean)
+  comenzar
+    RecibirMensaje(termino,R1)
+    RecibirMensaje(termino,R2) 
+    RecibirMensaje(termino,R3)
+  fin
+  
+  proceso avisarQueSiganRecorriendo
+  comenzar
+    EnviarMensaje(V,R1)
+    EnviarMensaje(V,R2)  
+    EnviarMensaje(V,R3)   
+  fin
+   
+areas
+  areaFiscal: AreaP(1,4,1,4)
+  esqCompartida: AreaC(50,50,50,50)
+  calle1: AreaP(1,1,100,1)
+  calle2: AreaP(1,2,100,2)
+  calle3: AreaP(1,3,100,3)
+  
+robots
+  robot recolector
+  variables
+    flores: numero
+    seguir: boolean
+    avAct: numero
+    calle: numero
+  comenzar
+    derecha
+    calle:= PosCa
+    avAct:= 0
+    flores:= 0
+    repetir 10
+      realizarEtapa(flores,avAct,calle)
+      EnviarMensaje(V,fiscal)  
+      RecibirMensaje(seguir,fiscal)
+  fin
+  
+  robot fiscalizador
+  variables
+    termino: boolean
+    flores: numero
+  comenzar
+    flores:= 0
+    repetir 10
+      esperarQueTerminen(termino)
+      avisarQueSiganRecorriendo
+    Pos(50,50)     {no hay q bloquear porque se supone que ya estan en sus esq de inicio}
+    juntarFlores(flores)
+    Informar("Se juntaron una cantidad de flores de ",flores)
+  fin
+  
+variables
+  R1: recolector
+  R2: recolector
+  R3: recolector
+  fiscal: fiscalizador
+comenzar
+  AsignarArea(R1, calle1)
+  AsignarArea(R2, calle2)
+  AsignarArea(R3, calle3)
+  AsignarArea(fiscal, areaFiscal)
+  AsignarArea(R1, esqCompartida)
+  AsignarArea(R2, esqCompartida)
+  AsignarArea(R3, esqCompartida)
+  AsignarArea(fiscal, esqCompartida)
+  Iniciar(R1, 1,1)
+  Iniciar(R2, 1,2)
+  Iniciar(R3, 1,3)
+  Iniciar(fiscal, 1,4)
+fin

@@ -1,0 +1,100 @@
+programa PRACTICA_5_3
+procesos
+  proceso juntarFlores(ES flores: numero; E calle: numero; ES avAct: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      si(flores < 10)  
+        tomarFlor
+        flores:= flores + 1
+      sino
+        posicionarseYdepositar(calle,avAct,flores)
+  fin
+  
+  proceso posicionarseYdepositar(E calle: numero; E avAct: numero; ES flores: numero)
+  comenzar
+    avAct:= PosAv
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    depositarFlores(flores)
+    Pos(avAct,calle)
+    LiberarEsquina(10,10)
+  fin
+  
+  proceso depositarFlores(ES flores: numero)
+  variables
+    flo: numero
+  comenzar
+    flo:= flores
+    repetir flo
+      depositarFlor
+      flores:= flores - 1
+  fin
+  
+  proceso realizarEtapa(ES flores: numero; E calle: numero; ES avAct: numero)
+  comenzar
+    repetir 15
+      juntarFlores(flores,calle,avAct)
+      si(PosAv < 100)
+        mover
+        avAct:= PosAv
+      sino
+        posicionarseYdepositar(calle,avAct,flores)  
+  fin
+  
+  proceso juntarTodasLasFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  
+areas
+  esquina: AreaC (10,10,10,10)
+  calle1: AreaP (1,3,100,3)
+  calle2: AreaP (1,4,100,4)
+  areaCosechador: AreaP(1,5,1,5)
+  
+robots
+  robot recolector
+  variables
+    flores: numero
+    calle: numero
+    avAct: numero
+  comenzar
+    flores:= 0
+    calle:= PosCa
+    avAct:= 0
+    derecha
+    repetir 7
+      realizarEtapa(flores,calle,avAct)    
+    EnviarMensaje(V,R3)  
+  fin
+
+  robot cosechador
+  variables
+    aviso: boolean
+    flores: numero
+  comenzar
+    flores:= 0
+    RecibirMensaje(aviso,R1)
+    RecibirMensaje(aviso,R2)
+    Pos(10,10)
+    juntarTodasLasFlores(flores)
+    Informar("Se contaron una cantidad de flores de ",flores)
+  fin
+  
+variables
+  R1: recolector
+  R2: recolector
+  R3: cosechador
+comenzar
+  AsignarArea(R1, esquina)
+  AsignarArea(R2, esquina)
+  AsignarArea(R3, esquina)
+  AsignarArea(R1, calle1)
+  AsignarArea(R2, calle2)
+  AsignarArea(R3, areaCosechador)
+  Iniciar(R1, 1,3)
+  Iniciar(R2, 1,4)
+  Iniciar(R3, 1,5)
+fin

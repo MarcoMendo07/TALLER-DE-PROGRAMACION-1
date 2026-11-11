@@ -1,0 +1,106 @@
+programa PRACTICA_5_5
+procesos
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+  fin
+  
+  proceso atenderSolicitud(E papelesAle: numero; E quien: numero)
+  comenzar
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    repetir papelesAle
+      depositarPapel
+    si(quien = 1)
+      EnviarMensaje(papelesAle,R1) 
+    sino
+      si(quien = 2)
+        EnviarMensaje(papelesAle,R2)  
+      sino
+        EnviarMensaje(papelesAle,R3)  
+    Pos(13,1)
+    LiberarEsquina(100,1)
+  fin
+  
+  proceso juntarPapeles(E papeles: numero; E av: numero; E calle: numero)
+  comenzar
+    repetir papeles
+      BloquearEsquina(100,1)
+      Pos(100,1)
+      tomarPapel         {bloquea, toma uno y vuelve a su esquina }
+      Pos(av,calle)
+      LiberarEsquina(100,1)
+  fin
+  
+  proceso depositarEnInicio(E papeles: numero)
+  comenzar
+    repetir papeles
+      depositarPapel
+  fin
+  
+areas
+  esquina: AreaC (100,1,100,1)
+  inicio1: AreaP (10,1,10,1)
+  inicio2: AreaP (11,1,11,1)
+  inicio3: AreaP (12,1,12,1)
+  inicio4: AreaP (13,1,13,1)
+  
+robots
+  robot robotCliente
+  variables
+    id: numero
+    papeles: numero
+    av, calle: numero
+  comenzar
+    av:= PosAv
+    calle:= PosCa
+    RecibirMensaje(id,servidor)
+    repetir 4
+      EnviarMensaje(id,servidor)
+      RecibirMensaje(papeles,servidor)
+      juntarPapeles(papeles,av,calle) 
+      depositarEnInicio(papeles)
+      EnviarMensaje(V,servidor) { Avisa a servidor que terminó de vaciar }
+  fin
+  
+  robot robotServidor
+  variables
+    listo: boolean
+    papelesAle: numero
+    quien: numero
+  comenzar
+    enviarIDs
+    repetir 12  { 3 clientes * 4 intentos = 12 solicitudes exactas }
+      RecibirMensaje(quien, *)
+      Random(papelesAle,1,5)
+      atenderSolicitud(papelesAle,quien)  
+      si(quien = 1)       { El server espera la confirmación SOLO del robot que atendió }
+        RecibirMensaje(listo, R1)
+      sino
+        si(quien = 2)
+          RecibirMensaje(listo, R2)
+        sino
+          RecibirMensaje(listo, R3)
+  fin
+  
+variables
+  servidor: robotServidor
+  R1: robotCliente
+  R2: robotCliente
+  R3: robotCliente
+comenzar
+  AsignarArea(servidor, esquina)
+  AsignarArea(R1, esquina)
+  AsignarArea(R2, esquina)
+  AsignarArea(R3, esquina)
+  AsignarArea(R1, inicio1)
+  AsignarArea(R2, inicio2)
+  AsignarArea(R3, inicio3)
+  AsignarArea(servidor, inicio4)
+  Iniciar(R1, 10,1)
+  Iniciar(R2, 11,1)
+  Iniciar(R3, 12,1)
+  Iniciar(servidor, 13,1)
+fin
