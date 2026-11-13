@@ -1,0 +1,94 @@
+programa PRACTICA_5_3
+procesos
+  proceso vaciarBolsa(ES flores: numero; ES pasos: numero; E avOriginal: numero; E calleOriginal: numero; E id: numero)
+  variables
+    ok: boolean
+  comenzar
+    si (flores > 0)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      mientras (HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(avOriginal, calleOriginal)
+      LiberarEsquina(10,10)
+      EnviarMensaje(id, R3)   {Notificamos al cosechador y esperamos que limpie}
+      RecibirMensaje(ok, R3)
+      flores:= 0
+      pasos:= 0
+  fin
+  
+  proceso recolectar(ES flores: numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+
+areas
+  esquina: AreaPC (10,10,10,10)
+  calle1: AreaP (1,3,100,3)
+  calle2: AreaP (1,4,100,4)
+  areaCosechador: AreaP (1,5,1,5)
+  
+robots
+  robot recolector
+  variables
+    flores, pasos, id: numero
+  comenzar
+    derecha
+    flores:= 0
+    pasos:= 0
+    RecibirMensaje(id, R3)
+    mientras (PosAv < 100)
+      recolectar(flores)
+      si (flores = 10) | (pasos = 15)
+        vaciarBolsa(flores, pasos, PosAv, PosCa, id)
+      mover
+      pasos:= pasos + 1
+    recolectar(flores)    {Procesar la última esquina (100)}
+    vaciarBolsa(flores, pasos, PosAv, PosCa, id)
+    EnviarMensaje(0, R3) { Código 0 para avisar que terminó definitivamente }
+  fin
+
+  robot cosechador
+  variables
+    quien, floresTotales: numero
+    terminados: numero
+  comenzar
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    floresTotales:= 0
+    terminados:= 0
+    mientras (terminados < 2)
+      RecibirMensaje(quien, *)
+      si (quien = 0)
+        terminados:= terminados + 1
+      sino
+        BloquearEsquina(10,10)
+        Pos(10,10)
+        mientras (HayFlorEnLaEsquina)
+          tomarFlor
+          floresTotales:= floresTotales + 1
+        Pos(1,5)
+        LiberarEsquina(10,10)     
+        si (quien = 1)     {Le da el OK al recolector}
+          EnviarMensaje(V, R1)
+        sino
+          EnviarMensaje(V, R2)
+    Informar('La cantidad total de flores recolectadas es ', floresTotales)
+  fin
+  
+variables
+  R1, R2: recolector
+  R3: cosechador
+comenzar
+  AsignarArea(R1, calle1)
+  AsignarArea(R2, calle2)
+  AsignarArea(R3, areaCosechador)
+  AsignarArea(R1, esquina)
+  AsignarArea(R2, esquina)
+  AsignarArea(R3, esquina)
+  Iniciar(R1, 1,3)
+  Iniciar(R2, 1,4)
+  Iniciar(R3, 1,5)
+fin
