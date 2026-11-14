@@ -1,3 +1,15 @@
+{5- Existe un robot servidor que tiene su bolsa con papeles. Tres robots clientes tienen 4
+intentos cada uno para solicitar al servidor que les entregue papeles. Cada vez que el
+servidor recibe un pedido de papeles de un cliente, se ubicará en la esquina (100,1),
+colocará allí una cantidad aleatoria de papeles (entre 1 y 5) y avisará al cliente
+correspondiente la cantidad de papeles que le depositó.
+Una vez que un cliente recibe un aviso, deberá recolectar uno a uno los papeles que le
+corresponden y depositarlos en su esquina inicial.
+El programa finalizará cuando todos los clientes hayan completado todos sus intentos.
+Asuma que el servidor tiene los papeles suficientes para cubrir todas las solicitudes.
+Los robots clientes inician en las esquinas (10,1), (11,1) y (12,1), y el robot servidor inicia en
+la esquina (13,1).  }
+
 programa PRACTICA_5_5
 procesos
   proceso enviarIDs
