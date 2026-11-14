@@ -1,3 +1,12 @@
+{4- Tres robots floreros tienen 8 intentos en total para juntar todas las flores dentro del
+cuadrante comprendido entre las esquinas (40,40) y (60,60). Para ello, en cada intento un
+robot fiscalizador indicará a un robot aleatorio la esquina a la que debe dirigirse. El
+fiscalizador calculará esta esquina de manera aleatoria. Al completarse los 8 intentos, los
+robots floreros deberán depositar todas las flores juntadas en la esquina (10,10), y el robot
+fiscalizador deberá informar la cantidad total de flores juntadas por los robots.
+Los robots floreros inician en las esquinas (1,1), (2,1) y (3,1) respectivamente, y el
+fiscalizador en la (4,1).  }
+
 programa PRACTICA_5_4
 procesos
   proceso calcularAleatorios(ES calleAle: numero; ES avAle: numero; ES id: numero)
