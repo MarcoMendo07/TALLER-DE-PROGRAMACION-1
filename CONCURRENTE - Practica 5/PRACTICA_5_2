@@ -1,3 +1,12 @@
+{2- Tres robots recolectores deben avanzar por su calle vaciando las esquinas. El avance
+debe realizarse en conjunto en etapas, siguiendo el modelo de sincronización barrera, en el
+cual los robots deben esperar que todos terminen su tarea antes de avanzar a la siguiente
+etapa. Cada etapa consiste en recorrer 10 esquinas y luego depositar todas las flores
+recolectadas en la esquina (50,50). Una vez que los robots recolectores completaron toda
+su calle, un robot fiscalizador deberá juntar todas las flores de la esquina (50,50) e informar
+la cantidad total de flores juntadas. Los robots recolectores inician en las esquinas (1,1),
+(1,2) y (1,3) respectivamente. El robot fiscalizador inicia en la esquina (1,4).}
+
 programa PRACTICA_5_2
 procesos
   proceso juntarFlores(ES flores: numero)
