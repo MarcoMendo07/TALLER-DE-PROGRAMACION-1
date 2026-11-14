@@ -63,8 +63,8 @@ areas
   calleAzul1: AreaP(4,98,100,98)
   calleAzul2: AreaP(4,99,100,99)
   
-  { El cuadrante exacto de colisión. Convención AreaPC }
-  areaCompartida: AreaPC(2,98,3,99)
+  { El cuadrante exacto de colisión. Convención AreaC --> asignada a todos los rob. ; sino es PC }
+  areaCompartida: AreaC(2,98,3,99)
   areaFiscal: AreaP(1,1,1,1)
   
 robots
