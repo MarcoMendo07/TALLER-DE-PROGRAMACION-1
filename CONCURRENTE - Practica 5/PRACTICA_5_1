@@ -52,24 +52,30 @@ procesos
   fin
   
 areas
+  { Fragmentación para que los inicios y finales sean 100% privados }
   avRojo1: AreaP(2,1,2,97)
   avRojo2: AreaP(3,1,3,97)
+  avRojo1Fin: AreaP(2,100,2,100)
+  avRojo2Fin: AreaP(3,100,3,100)
+  
+  calleAzul1Ini: AreaP(1,98,1,98)
+  calleAzul2Ini: AreaP(1,99,1,99)
   calleAzul1: AreaP(4,98,100,98)
   calleAzul2: AreaP(4,99,100,99)
-  areaCompartida: AreaC (1,98,3,100)
+  
+  { El cuadrante exacto de colisión. Convención AreaPC }
+  areaCompartida: AreaPC(2,98,3,99)
   areaFiscal: AreaP(1,1,1,1)
   
 robots
   robot equipoRojo
   variables
-    flores: numero
-    av: numero
-    id: numero   {id de equipo}
+    flores, av, id: numero
   comenzar
     flores:= 0
     av:= PosAv
     RecibirMensaje(id,fiscal)
-    repetir 96    {va a terminar en la 97}
+    repetir 96
       juntarFlores(flores)
       mover
     ultimasEsquinasDeLaAvenida(flores,av)  
@@ -79,9 +85,7 @@ robots
   
   robot equipoAzul
   variables
-    papeles: numero
-    calle: numero
-    id: numero
+    papeles, calle, id: numero
   comenzar
     papeles:= 0
     calle:= PosCa
@@ -98,10 +102,7 @@ robots
 
   robot fiscalizador
   variables
-    objetosRojo: numero
-    objetosAzul: numero
-    quien: numero
-    cant: numero
+    objetosRojo, objetosAzul, quien, cant: numero
   comenzar
     enviarIDs
     objetosRojo:= 0
@@ -119,31 +120,41 @@ robots
           si(quien = 3)
             RecibirMensaje(cant,A1)
             objetosAzul:= objetosAzul + cant
-          sino {quien = 4}
+          sino
             RecibirMensaje(cant,A2)
             objetosAzul:= objetosAzul + cant
+              
     si(objetosRojo > objetosAzul)
-      Informar("Gano el equipo Rojo con un total de objetos de ",objetosRojo)
+      Informar('Gano el equipo Rojo', objetosRojo)
     sino
-      Informar("Gano el equipo Azul con un total de objetos de ",objetosAzul)            
+      si(objetosAzul > objetosRojo)
+        Informar('Gano el equipo Azul', objetosAzul)
+      sino
+        Informar('Empate', objetosRojo)            
   fin
-  
+
 variables
   fiscal: fiscalizador
-  R1: equipoRojo
-  R2: equipoRojo
-  A1: equipoAzul
-  A2: equipoAzul
+  R1, R2: equipoRojo
+  A1, A2: equipoAzul
 comenzar
   AsignarArea(fiscal, areaFiscal)
+  
   AsignarArea(R1, avRojo1)
   AsignarArea(R2, avRojo2)
+  AsignarArea(R1, avRojo1Fin)
+  AsignarArea(R2, avRojo2Fin)
+  
+  AsignarArea(A1, calleAzul1Ini)
+  AsignarArea(A2, calleAzul2Ini)
   AsignarArea(A1, calleAzul1)
   AsignarArea(A2, calleAzul2)
+  
   AsignarArea(R1, areaCompartida)
   AsignarArea(R2, areaCompartida)
   AsignarArea(A1, areaCompartida)
   AsignarArea(A2, areaCompartida)
+  
   Iniciar(fiscal, 1,1)
   Iniciar(R1, 2,1)
   Iniciar(R2, 3,1)
