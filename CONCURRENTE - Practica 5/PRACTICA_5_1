@@ -1,3 +1,13 @@
+{1- Se organizó una competencia entre el equipo rojo y el equipo azul. Cada equipo consta
+de dos robots, y debe realizar una tarea:
+- Los robots R1 y R2 del equipo rojo debe juntar todas las flores de las avenidas 2 y 3
+respectivamente
+- Los robots A1 y A2 del equipo azul debe juntar todos los papeles de las calles 98 y
+99 respectivamente
+Al finalizar la competencia, un robot fiscalizador deberá informar el equipo que juntó más
+objetos.
+}
+
 programa PRACTICA_5_1
 procesos
   proceso enviarIDs
